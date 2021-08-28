@@ -41,8 +41,8 @@
     <main class="section coral">
       <div class="number-section">
         <!-- NUMBER ONLY -->
-        <div v-if="displayType == DisplayType.NUMBER" style="display: flex">
-          <number-input @change="show($event)"/>
+        <div v-if="displayType == DisplayType.NUMBER" style="display: flex; padding:5px">
+          <span style="font-size:40px;margin-top:5px;margin-right:10px">Enter Number</span> <number-input @change="show($event)"/>
         </div>
 
         <!-- MULTIPLICATION -->
@@ -171,7 +171,7 @@ export default {
 <style>
 html,
 body {
-  margin: 0;
+  margin: 0 !important;
   padding: 0;
 }
 #app {
@@ -197,7 +197,7 @@ header {
 
 .left-side {
   grid-column: 1 / 2;
-  width: 100px;
+  width: 70px;
   background-color: lightblue;
   display: flex;
   flex-direction: row;
@@ -211,12 +211,12 @@ header {
 
 .left-side button {
   margin-bottom: 5px;
-  width: 95px;
-  height: 95px;
+  width: 70px;
+  height: 70px;
 }
 
 .left-side button.selected {
-  background-color: lightgreen;
+  background-color: gold;
 }
 
 main {
@@ -226,7 +226,7 @@ main {
 }
 
 main .number-section {
-  height: 100px;
+  height: 80px;
   background-color: azure;
 }
 

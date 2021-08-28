@@ -6,6 +6,7 @@
       readonly
       class="number-input"
       v-model="number"
+      placeholder="____"
       @click="toggleKeyboard()"
     />
 
@@ -38,8 +39,8 @@ export default {
 
     toggleKeyboard() {
       this.keyboardVisible = !this.keyboardVisible;
-      if(!this.keyboardVisible) {
-        this.onChanged()
+      if (!this.keyboardVisible) {
+        this.onChanged();
       }
     },
 
@@ -71,7 +72,7 @@ export default {
      */
     onDone() {
       this.keyboardVisible = false;
-       this.onChanged()
+      this.onChanged();
     },
   },
 };
@@ -80,7 +81,7 @@ export default {
 
 <style scoped>
 .number-input {
-  font-size: 90px;
-  width: 400px;
+  font-size: 50px;
+  width: 130px;
 }
 </style>

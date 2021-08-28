@@ -11,9 +11,9 @@
       </button>
     </div>
     <div class="control-buttons" style="width:100px">
-    <button @click="deleteClicked()">X</button>
-    <button @click="clearClicked()">Clear</button>
-    <button @click="doneClicked()">Done</button>
+    <button class="delete" @click="deleteClicked()">X</button>
+    <button class="clear" @click="clearClicked()">Clear</button>
+    <button class="done" @click="doneClicked()">Done</button>
     </div>
   </div>
 </template>
@@ -69,10 +69,23 @@ export default {
   width: 350px;
   padding: 5px;
 }
+
 button {
   width: 100px;
   height: 100px;
   margin: 1px;
+}
+
+button.delete {
+  background-color:orange;
+}
+
+button.clear {
+  background-color:red;
+}
+
+button.done {
+  background-color:greenyellow;
 }
 
 h3 {
