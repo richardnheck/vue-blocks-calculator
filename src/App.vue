@@ -52,8 +52,34 @@
         </div>
 
         <!-- MULTIPLICATION -->
-        <div v-if="displayType == DisplayType.MULTIPLICATION">
-          Multiplication (TODO)
+        <div
+          v-if="displayType == DisplayType.MULTIPLICATION"
+          class="expression"
+        >
+          <select v-model="multiplier">
+            <option
+              v-for="option in multiplierOptions"
+              :value="option"
+              :key="option"
+            >
+              {{ option }}
+            </option>
+          </select>
+           <div class="operator">X</div>
+           <number-input
+            :number="multiplicationNumber"
+            @change="updateMultiplicationNumber($event)"
+          />
+          <div class="operator">=</div>
+          <number-input
+            :number="multiplicationAnswer"
+            @change="updateMultiplicationAnswer($event)"
+          />
+          <button @click="clearMultiplicationExpression()">Clear</button>
+          <div v-if="multiplicationExpressionComplete">
+            <div class="tick" v-if="multiplicationCorrect">✓</div>
+            <div class="cross" v-else>✗</div>
+          </div>
         </div>
 
         <!-- DIVISION -->
@@ -68,15 +94,16 @@
         </div>
       </div>
       <div class="blocks-section">
-       
         <!-- NUMBER ONLY -->
         <div v-if="displayType == DisplayType.NUMBER">
           <number-block :number="this.number" />
         </div>
 
         <!-- MULTIPLICATION -->
-        <div v-if="displayType == DisplayType.MULTIPLICATION">
-          Multiplication (TODO)
+        <div v-if="displayType == DisplayType.MULTIPLICATION" style="padding:10px">
+          <div v-for="n in multiplier" :key="n" style="border:1px solid black;min-height:100px;margin-bottom:5px">
+              <number-block :number="multiplicationNumber"/>
+          </div>
         </div>
 
         <!-- DIVISION -->
@@ -122,6 +149,14 @@ export default {
       number: "",
 
       // For Multiplication
+      multiplicationNumber: "",
+      multiplier: "",
+      multiplierOptions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      multiplicationAnswer: "",
+
+      // For Division
+      divisionNumber: "",
+      divisor: "",
     };
   },
 
@@ -135,7 +170,25 @@ export default {
   /**
    * Computed Properties
    */
-  computed: {},
+  computed: {
+    multiplicationExpressionComplete() {
+      return (
+        this.multiplicationNumber != "" &&
+        this.multiplier != "" &&
+        this.multiplicationAnswer != ""
+      );
+    },
+
+    multiplicationCorrect() {
+      if (this.multiplicationExpressionComplete) {
+        return (
+          parseInt(this.multiplier) * parseInt(this.multiplicationNumber) ==
+          parseInt(this.multiplicationAnswer)
+        );
+      }
+      return false;
+    },
+  },
 
   /**
    * Methods
@@ -154,6 +207,23 @@ export default {
     show(number) {
       this.number = number;
     },
+
+    updateMultiplicationNumber(value) {
+      console.log('Update number', value)
+      this.multiplicationNumber = value;
+    },
+
+    updateMultiplicationAnswer(value) {
+      console.log('Update answer', value)
+      this.multiplicationAnswer = value;
+    },
+
+    clearMultiplicationExpression() {
+      console.log('clear')
+      this.multiplier = "";
+      this.multiplicationNumber = "";
+      this.multiplicationAnswer = "";
+    }
   },
 };
 </script>
@@ -169,6 +239,38 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+
+.expression {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 5px;
+  height: 65px;
+
+  .operator {
+    font-size: 4rem;
+  }
+
+  select {
+    font-size: 3rem;
+    height: 65px;
+  }
+
+  button {
+    height: 100%;
+  }
+
+  .tick, .cross {
+    font-size: 3rem;
+  }
+  .tick {
+    color: green
+  }
+  .cross {
+    color:red
+  }
 }
 
 .parent {

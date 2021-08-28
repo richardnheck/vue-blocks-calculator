@@ -34,8 +34,15 @@ export default {
   props: {
     value:String
   },
+  watch: {
+    value: function (newVal) {
+      this.number = (newVal !== undefined) ? newVal : "";
+      console.log('watch', this.number)
+    },
+  },
   created() {
-    this.number = this.value;
+    this.number = (this.value !== undefined) ? this.value : "";
+    console.log('created', this.number)
   },
   methods: {
     onChanged() {

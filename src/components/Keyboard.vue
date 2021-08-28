@@ -10,10 +10,10 @@
         {{ number }}
       </button>
     </div>
-    <div class="control-buttons" style="width:100px">
-    <button class="delete" @click="deleteClicked()">X</button>
-    <button class="clear" @click="clearClicked()">Clear</button>
-    <button class="done" @click="doneClicked()">Done</button>
+    <div class="control-buttons">
+      <button class="delete" @click="deleteClicked()">X</button>
+      <button class="clear" @click="clearClicked()">Clear</button>
+      <button class="done" @click="doneClicked()">Done</button>
     </div>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .keyboard {
-  width: 500px;
+  width: 340px;
   border: 1px solid gray;
   display: flex; /* or inline-flex */
 }
@@ -66,26 +66,31 @@ export default {
 }
 
 .number-buttons {
-  width: 350px;
+  width: 250px;
+  padding: 5px;
+}
+
+.control-buttons {
+  width:70px;
   padding: 5px;
 }
 
 button {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px !important;
   margin: 1px;
 }
 
 button.delete {
-  background-color:orange;
+  background-color: orange;
 }
 
 button.clear {
-  background-color:red;
+  background-color: red;
 }
 
 button.done {
-  background-color:greenyellow;
+  background-color: greenyellow;
 }
 
 h3 {
