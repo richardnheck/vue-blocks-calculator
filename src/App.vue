@@ -41,8 +41,14 @@
     <main class="section coral">
       <div class="number-section">
         <!-- NUMBER ONLY -->
-        <div v-if="displayType == DisplayType.NUMBER" style="display: flex; padding:5px">
-          <span style="font-size:40px;margin-top:5px;margin-right:10px">Enter Number</span> <number-input @change="show($event)"/>
+        <div
+          v-if="displayType == DisplayType.NUMBER"
+          style="display: flex; padding: 5px"
+        >
+          <span style="font-size: 40px; margin-top: 5px; margin-right: 10px"
+            >Enter Number</span
+          >
+          <number-input :value="number" @change="show($event)" />
         </div>
 
         <!-- MULTIPLICATION -->
@@ -62,23 +68,26 @@
         </div>
       </div>
       <div class="blocks-section">
-        <div class="place-value-container">
-          <div class="block">
-            <h2>Thousands</h2>
-            <div class="value">{{ thousands }}</div>
-          </div>
-          <div class="block">
-            <h2>Hundreds</h2>
-            <div class="value">{{ hundreds }}</div>
-          </div>
-          <div class="block">
-            <h2>Tens</h2>
-            <div class="value">{{ tens }}</div>
-          </div>
-          <div class="block">
-            <h2>Ones</h2>
-            <div class="value">{{ ones }}</div>
-          </div>
+       
+        <!-- NUMBER ONLY -->
+        <div v-if="displayType == DisplayType.NUMBER">
+          <number-block :number="this.number" />
+        </div>
+
+        <!-- MULTIPLICATION -->
+        <div v-if="displayType == DisplayType.MULTIPLICATION">
+          Multiplication (TODO)
+        </div>
+
+        <!-- DIVISION -->
+        <div v-if="displayType == DisplayType.DIVISION">Division (TODO)</div>
+
+        <!-- ADDITION -->
+        <div v-if="displayType == DisplayType.ADDITION">Addition (TODO)</div>
+
+        <!-- SUBTRACTION -->
+        <div v-if="displayType == DisplayType.SUBTRACTION">
+          Subtraction (TODO)
         </div>
       </div>
     </main>
@@ -88,7 +97,8 @@
 </template>
 
 <script>
-import NumberInput from './components/NumberInput.vue';
+import NumberBlock from "./components/NumberBlock.vue";
+import NumberInput from "./components/NumberInput.vue";
 
 const DisplayType = {
   NUMBER: "number",
@@ -102,15 +112,16 @@ export default {
   name: "App",
   components: {
     NumberInput,
+    NumberBlock,
   },
   data: function () {
     return {
       displayType: DisplayType.NUMBER,
+
+      // For Number Only Display
       number: "",
-      thousands: 0,
-      hundreds: 0,
-      tens: 0,
-      ones: 0,
+
+      // For Multiplication
     };
   },
 
@@ -142,33 +153,12 @@ export default {
      */
     show(number) {
       this.number = number;
-      this.ones = 0;
-      this.tens = 0;
-      this.hundreds = 0;
-      this.thousands = 0;
-      const length = this.number.length;
-
-      if (length > 0) {
-        this.ones = this.number[length - 1];
-      }
-
-      if (length > 1) {
-        this.tens = this.number[length - 2];
-      }
-
-      if (length > 2) {
-        this.hundreds = this.number[length - 3];
-      }
-
-      if (length > 3) {
-        this.thousands = this.number[length - 4];
-      }
     },
   },
 };
 </script>
 
-<style>
+<style lang="scss">
 html,
 body {
   margin: 0 !important;
@@ -191,7 +181,7 @@ body {
 header {
   padding: 0.5rem;
   grid-column: 1 / 4;
-  background-color: gray;
+  background-color: black;
   color: white;
 }
 
@@ -231,7 +221,7 @@ main .number-section {
 }
 
 main .blocks-section {
-  background-color: lightgrey;
+  background-color: white;
 }
 
 .right-side {

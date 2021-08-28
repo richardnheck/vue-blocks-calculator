@@ -31,7 +31,12 @@ export default {
       keyboardVisible: false,
     };
   },
-  props: {},
+  props: {
+    value:String
+  },
+  created() {
+    this.number = this.value;
+  },
   methods: {
     onChanged() {
       this.$emit("change", this.number);
