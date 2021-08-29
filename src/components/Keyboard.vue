@@ -9,11 +9,12 @@
       >
         {{ number }}
       </button>
+      <button class="number-button control delete" @click="deleteClicked()">&lt;</button>
+      <button class="control clear" @click="clearClicked()">C</button>
     </div>
     <div class="control-buttons">
-      <button class="delete" @click="deleteClicked()">X</button>
-      <button class="clear" @click="clearClicked()">Clear</button>
-      <button class="done" @click="doneClicked()">Done</button>
+      
+      <button class="done" @click="doneClicked()">OK</button>
     </div>
   </div>
 </template>
@@ -47,21 +48,22 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 .keyboard {
   width: 340px;
-  border: 1px solid gray;
+  border: 2px solid #322348;
   display: flex; /* or inline-flex */
+  border-radius: 5px;
 }
 
 .overlay {
   position: fixed;
   z-index: 1000;
   text-align: left;
-  box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 35px -16px rgba(0, 0, 0, 0.9);
   padding: 5px;
   color: #363b41;
-  background-color: #ffffff;
+  background-color: #563d7c;
   overflow: visible;
 }
 
@@ -71,26 +73,23 @@ export default {
 }
 
 .control-buttons {
-  width:70px;
+  width:75px;
   padding: 5px;
 }
 
 button {
   width: 70px;
   height: 70px !important;
-  margin: 1px;
-}
+  margin: 5px;
+  background-color:transparent;
+  border: 1px solid #ffe484;
+  color:#ffe484;
+  font-size:2rem;
+  border-radius:5px;
 
-button.delete {
-  background-color: orange;
-}
-
-button.clear {
-  background-color: red;
-}
-
-button.done {
-  background-color: greenyellow;
+  &:active {
+    background-color: #7755aa;
+  }
 }
 
 h3 {

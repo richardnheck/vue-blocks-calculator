@@ -6,7 +6,6 @@
       readonly
       class="number-input"
       v-model="number"
-      placeholder="____"
       @click="toggleKeyboard()"
     />
 
@@ -93,5 +92,11 @@ export default {
 .number-input {
   font-size: 50px;
   width: 130px;
+  background-color:#805ab8;
+  border:2px solid #332449;
+  color: white;
+  cursor:default;
+
+  padding-left:15px;
 }
 </style>

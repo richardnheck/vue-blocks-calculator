@@ -1,8 +1,10 @@
 <template>
   <div id="app" class="parent">
-    <header class="pink section">Blocks Calculator</header>
+    <header class="pink section">Base Ten Blocks Calculator</header>
     <div class="left-side section">
+      <div class="logo">BC</div>
       <button
+        class="number"
         :class="{ selected: displayType == DisplayType.NUMBER }"
         @click="selectDisplayType(DisplayType.NUMBER)"
         title="Number"
@@ -45,7 +47,7 @@
           v-show="displayType == DisplayType.NUMBER"
           style="display: flex; padding: 5px"
         >
-          <span style="font-size: 40px; margin-top: 5px; margin-right: 10px"
+          <span style="font-size: 40px; margin-left:10px; margin-top: 7px; margin-right: 10px"
             >Enter Number</span
           >
           <number-input :value="number" @change="show($event)" />
@@ -85,11 +87,6 @@
           <div
             v-for="n in multiplier"
             :key="n"
-            style="
-              border: 1px solid black;
-              min-height: 100px;
-              margin-bottom: 5px;
-            "
           >
             <number-block :number="multiplicationNumber" />
           </div>
@@ -97,17 +94,19 @@
 
         <!-- DIVISION -->
         <div v-if="displayType == DisplayType.DIVISION" style="padding: 10px">
-          <number-block :number="divisionNumber" />
+          <number-block v-if="divisionNumber" :number="divisionNumber" />
           <hr v-if="divisionNumber != ''" />
           <div
-            class="error"
+            class="alert"
             v-if="divisionRemainder !== '' && parseInt(divisionRemainder) < 0"
           >
             Your answer is too big
           </div>
           <div v-if="divisionAnswer !== '' && divisionRemainder > 0" style="">
-            <span>R</span><number-block :number="divisionRemainder" />
+            <span class="sub-title">Remainder</span>
+            <number-block :number="divisionRemainder" />
           </div>
+         
           <div
             v-if="
               divisor !== '' &&
@@ -116,19 +115,15 @@
             "
             style="margin-top: 20px"
           >
-            <div
-              v-for="n in divisor"
-              :key="n"
-              style="
-                border: 1px solid black;
-                min-height: 100px;
-                margin-bottom: 5px;
-              "
-            >
+           <span class="sub-title">Result</span>
+            <div v-for="n in divisor" :key="n">
+             <number-block
+                :number="divisionAnswer"/>
+              <!--
               <number-block
                 v-if="divisionAnswer !== ''"
                 :number="divisionAnswer"
-              />
+              />-->
             </div>
           </div>
         </div>
@@ -136,20 +131,20 @@
         <!-- ADDITION -->
         <div v-if="displayType == DisplayType.ADDITION">
           <number-block :number="additionNumber1" /> 
-          <div style="font-size:4rem" v-if="additionNumber1">+</div>
+          <div class="operator">+</div>
           <number-block :number="additionNumber2" />
         </div>
 
         <!-- SUBTRACTION -->
         <div v-if="displayType == DisplayType.SUBTRACTION">
           <number-block :number="subtractionNumber1" /> 
-          <div style="font-size:4rem" v-if="subtractionNumber1">-</div>
+          <div class="operator">-</div>
           <number-block :number="subtractionNumber2" />
         </div>
       </div>
     </main>
     <!--<div class="right-side yellow section" contenteditable>Right Sidebar</div>-->
-    <footer class="green section">Parabol Ink ©</footer>
+    <!--<footer class="green section">Parabol Ink ©</footer>-->
   </div>
 </template>
 
@@ -322,6 +317,7 @@ body {
 }
 
 .expression {
+  margin-left:10px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -336,6 +332,9 @@ body {
   select {
     font-size: 3rem;
     height: 65px;
+    background-color: #805ab8;
+    color: white;
+    border:2px solid #332449;
   }
 
   button {
@@ -347,7 +346,7 @@ body {
     font-size: 3rem;
   }
   .tick {
-    color: green;
+    color: #17e217;
   }
   .cross {
     color: red;
@@ -368,14 +367,15 @@ body {
 header {
   padding: 0.5rem;
   grid-column: 1 / 4;
-  background-color: black;
+  background-color: #322348;
   color: white;
 }
 
 .left-side {
   grid-column: 1 / 2;
-  width: 70px;
-  background-color: lightblue;
+  width: 75px;
+  background-color:#46475f;
+  border-right:2px solid #2e2f3f;
   display: flex;
   flex-direction: row;
   flex-flow: wrap;
@@ -383,33 +383,77 @@ header {
   flex-wrap: wrap;
   flex-direction: row;
   align-content: flex-start; /* NEW */
-  padding: 5px;
+
+  .logo {
+    display:grid;
+    justify-content: center;
+    align-items: center;
+    color: #ffe484;
+    border-bottom: 2px solid #2e2f3f;
+    height:80px;
+    width: 100%;
+    margin-bottom:10px;
+    font-size: 2rem;
+    background-color:#4b346d;
+  }
 }
 
 .left-side button {
-  margin-bottom: 5px;
+  margin: 5px;
   width: 70px;
   height: 70px;
   font-size: 2rem;
+  background-color:transparent;
+  border: 1px solid #ffe484;
+  color:#ffe484;
+  border-radius:5px;
+
+  &:active {
+    background-color: #7d7da8;
+  }
 }
 
 .left-side button.selected {
-  background-color: gold;
+  background-color: #68688d;
 }
+
+.left-side button.number {
+  font-size:1.5rem;
+}
+
 
 main {
   grid-column: 2 / 3;
   display: grid;
   grid-template: auto 1fr / auto;
+
+  background: rgb(63,94,251);
+  background: -moz-linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  background: -webkit-linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  background: linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3f5efb",endColorstr="#fc466b",GradientType=1);
 }
 
 main .number-section {
   height: 80px;
-  background-color: azure;
+  background-color: #563d7c;
+  border-bottom:2px solid #372650;
+  color: #c7a1ff;
 }
 
 main .blocks-section {
-  background-color: white;
+  .sub-title {
+    margin-left:10px;
+    color: black;
+    font-weight: bold;
+  }
+
+  .operator {
+    margin:0px;
+    padding:0px;
+    font-size:3rem;
+    text-align:center
+  }
 }
 
 .right-side {
@@ -437,7 +481,28 @@ footer {
   height: 100%;
 }
 
-.error {
-  color: red;
+.alert {
+  background-color:#fff3cd;
+  border-color:#e0d1a2;
+  color: #856404;
+  padding:15px;
+  border-radius:5px;
+  margin:10px;
 }
+
+.clear-button {
+  height: 60px !important;
+  margin: 5px;
+  background-color:transparent;
+  border: 1px solid #ffe484;
+  color:#ffe484;
+  font-size:1.5rem;
+  border-radius:5px;
+
+  &:active {
+    background-color: #7755aa;
+  }
+}
+
+
 </style>

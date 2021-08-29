@@ -1,25 +1,43 @@
 <template>
   <div class="container">
+    <div class="place-group empty" v-if="number.length == 0">?</div>
+
     <div class="place-group thousands" v-if="number.length == 4">
-      <h2>thousands <span>({{ thousands }})</span></h2>
+      <h2>
+        thousands <span>({{ thousands }})</span>
+      </h2>
       <div class="blocks">
-        <div v-for="block in this.thousands" :key="block" class="thousand-block"></div>
+        <div
+          v-for="block in this.thousands"
+          :key="block"
+          class="thousand-block"
+        ></div>
       </div>
     </div>
     <div class="place-group hundreds" v-if="number.length >= 3">
-      <h2>hundreds <span>({{ hundreds }})</span></h2>
+      <h2>
+        hundreds <span>({{ hundreds }})</span>
+      </h2>
       <div class="blocks">
-        <div v-for="block in this.hundreds" :key="block" class="hundred-block"></div>
+        <div
+          v-for="block in this.hundreds"
+          :key="block"
+          class="hundred-block"
+        ></div>
       </div>
     </div>
     <div class="place-group tens" v-if="number.length > 1">
-      <h2>tens <span>({{ tens }})</span></h2>
+      <h2>
+        tens <span>({{ tens }})</span>
+      </h2>
       <div class="blocks">
         <div v-for="block in this.tens" :key="block" class="ten-block"></div>
       </div>
     </div>
     <div class="place-group ones" v-if="number.length > 0">
-      <h2>ones <span>({{ ones }})</span></h2>
+      <h2>
+        ones <span>({{ ones }})</span>
+      </h2>
       <div class="blocks">
         <div v-for="block in this.ones" :key="block" class="one-block"></div>
       </div>
@@ -31,11 +49,11 @@
 export default {
   name: "NumberBlock",
   props: {
-    number:String
+    number: String,
   },
   created() {
-      this.parse(this.number);
-      console.log('NumberBlock', this.number)
+    this.parse(this.number);
+    console.log("NumberBlock", this.number);
   },
   watch: {
     number: function (newVal) {
@@ -52,13 +70,13 @@ export default {
   },
   methods: {
     parse(number) {
-      let num = parseInt(number).toString()
+      let num = parseInt(number).toString();
       this.ones = 0;
       this.tens = 0;
       this.hundreds = 0;
       this.thousands = 0;
       const length = num.length;
-      console.log('length', length)
+      console.log("length", length);
 
       if (length > 0) {
         this.ones = parseInt(num[length - 1]);
@@ -85,20 +103,42 @@ export default {
 .container {
   display: flex;
   flex-direction: row;
-  
+  background-color: white;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2px #333;
+
+  .place-group:first-of-type {
+    border-left: none;
+  }
+
+  .place-group:last-of-type {
+    border-right: none;
+  }
+
+  .place-group.empty {
+    height: 75px;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    font-size:2rem;
+    color: gray;
+  }
 
   .place-group {
     border: 1px solid lightgray;
+    border-top: none;
+    border-bottom: none;
     flex-grow: 1;
-    margin:5px;
-    //align-items: stretch;
-    max-width:350px;
+    flex-shrink: 1;
+    margin: 5px 0 5px 0px;
+    //max-width:350px;
 
     h2 {
       display: block;
       text-align: center;
-      font-size:0.7rem;
-      margin:0px;
+      font-size: 0.7rem;
+      margin: 0px;
       font-weight: 100;
 
       span {
@@ -113,9 +153,8 @@ export default {
       justify-content: flex-start;
       min-width: 100px;
       max-width: 500px;
-      padding:5px;
+      padding: 5px;
 
-    
       .one-block {
         display: block;
         margin: 2px;
@@ -129,9 +168,16 @@ export default {
       .ten-block {
         display: block;
         margin: 2px;
-        width:19px;
-        height:135px;
-        background-image: url("../assets/ten-block.png");
+
+        // For horizontal
+        height: 19px;
+        width: 135px;
+        background-image: url("../assets/ten-block-horizontal.png");
+
+        // For vertical
+        // width:19px;
+        // height:135px;
+        // background-image: url("../assets/ten-block.png");
         background-repeat: no-repeat;
         background-size: cover;
       }
@@ -139,8 +185,8 @@ export default {
       .hundred-block {
         display: block;
         margin: 2px;
-        width:135px;
-        height:40px;
+        width: 135px;
+        height: 40px;
         background-image: url("../assets/hundred-block.png");
         background-repeat: no-repeat;
         background-size: cover;
@@ -149,8 +195,8 @@ export default {
       .thousand-block {
         display: block;
         margin: 2px;
-        width:100px;
-        height:90px;
+        width: 100px;
+        height: 90px;
         background-image: url("../assets/thousand-block.png");
         background-repeat: no-repeat;
         background-size: cover;
