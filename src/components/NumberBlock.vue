@@ -1,25 +1,25 @@
 <template>
   <div class="container">
     <div class="place-group thousands" v-if="number.length == 4">
-      <h2>Thousands <span>({{ thousands }})</span></h2>
+      <h2>thousands <span>({{ thousands }})</span></h2>
       <div class="blocks">
         <div v-for="block in this.thousands" :key="block" class="thousand-block"></div>
       </div>
     </div>
     <div class="place-group hundreds" v-if="number.length >= 3">
-      <h2>Hundreds <span>({{ hundreds }})</span></h2>
+      <h2>hundreds <span>({{ hundreds }})</span></h2>
       <div class="blocks">
         <div v-for="block in this.hundreds" :key="block" class="hundred-block"></div>
       </div>
     </div>
     <div class="place-group tens" v-if="number.length > 1">
-      <h2>Tens <span>({{ tens }})</span></h2>
+      <h2>tens <span>({{ tens }})</span></h2>
       <div class="blocks">
         <div v-for="block in this.tens" :key="block" class="ten-block"></div>
       </div>
     </div>
     <div class="place-group ones" v-if="number.length > 0">
-      <h2>Ones <span>({{ ones }})</span></h2>
+      <h2>ones <span>({{ ones }})</span></h2>
       <div class="blocks">
         <div v-for="block in this.ones" :key="block" class="one-block"></div>
       </div>
@@ -31,10 +31,11 @@
 export default {
   name: "NumberBlock",
   props: {
-    number: String,
+    number:String
   },
   created() {
       this.parse(this.number);
+      console.log('NumberBlock', this.number)
   },
   watch: {
     number: function (newVal) {
@@ -51,27 +52,28 @@ export default {
   },
   methods: {
     parse(number) {
-      this.number = number;
+      let num = parseInt(number).toString()
       this.ones = 0;
       this.tens = 0;
       this.hundreds = 0;
       this.thousands = 0;
-      const length = this.number.length;
+      const length = num.length;
+      console.log('length', length)
 
       if (length > 0) {
-        this.ones = parseInt(this.number[length - 1]);
+        this.ones = parseInt(num[length - 1]);
       }
 
       if (length > 1) {
-        this.tens = parseInt(this.number[length - 2]);
+        this.tens = parseInt(num[length - 2]);
       }
 
       if (length > 2) {
-        this.hundreds = parseInt(this.number[length - 3]);
+        this.hundreds = parseInt(num[length - 3]);
       }
 
       if (length > 3) {
-        this.thousands = parseInt(this.number[length - 4]);
+        this.thousands = parseInt(num[length - 4]);
       }
     },
   },
@@ -95,10 +97,13 @@ export default {
     h2 {
       display: block;
       text-align: center;
+      font-size:0.7rem;
+      margin:0px;
+      font-weight: 100;
 
       span {
         color: gray;
-        font-size: 1rem;
+        font-size: 0.7rem;
       }
     }
 

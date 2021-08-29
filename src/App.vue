@@ -35,14 +35,14 @@
         @click="selectDisplayType(DisplayType.DIVISION)"
         title="Division"
       >
-        /
+        ÷
       </button>
     </div>
     <main class="section coral">
       <div class="number-section">
         <!-- NUMBER ONLY -->
         <div
-          v-if="displayType == DisplayType.NUMBER"
+          v-show="displayType == DisplayType.NUMBER"
           style="display: flex; padding: 5px"
         >
           <span style="font-size: 40px; margin-top: 5px; margin-right: 10px"
@@ -52,45 +52,23 @@
         </div>
 
         <!-- MULTIPLICATION -->
-        <div
-          v-if="displayType == DisplayType.MULTIPLICATION"
-          class="expression"
-        >
-          <select v-model="multiplier">
-            <option
-              v-for="option in multiplierOptions"
-              :value="option"
-              :key="option"
-            >
-              {{ option }}
-            </option>
-          </select>
-           <div class="operator">X</div>
-           <number-input
-            :number="multiplicationNumber"
-            @change="updateMultiplicationNumber($event)"
-          />
-          <div class="operator">=</div>
-          <number-input
-            :number="multiplicationAnswer"
-            @change="updateMultiplicationAnswer($event)"
-          />
-          <button @click="clearMultiplicationExpression()">Clear</button>
-          <div v-if="multiplicationExpressionComplete">
-            <div class="tick" v-if="multiplicationCorrect">✓</div>
-            <div class="cross" v-else>✗</div>
-          </div>
+        <div v-show="displayType == DisplayType.MULTIPLICATION">
+          <multiplication-expression @changed="updateMultiplication($event)" />
         </div>
 
         <!-- DIVISION -->
-        <div v-if="displayType == DisplayType.DIVISION">Division (TODO)</div>
+        <div v-show="displayType == DisplayType.DIVISION">
+          <division-expression @changed="updateDivision($event)" />
+        </div>
 
         <!-- ADDITION -->
-        <div v-if="displayType == DisplayType.ADDITION">Addition (TODO)</div>
+        <div v-show="displayType == DisplayType.ADDITION">
+          <addition-expression @changed="updateAddition($event)" />
+        </div>
 
         <!-- SUBTRACTION -->
-        <div v-if="displayType == DisplayType.SUBTRACTION">
-          Subtraction (TODO)
+        <div v-show="displayType == DisplayType.SUBTRACTION">
+          <subtraction-expression @changed="updateSubtraction($event)"/>
         </div>
       </div>
       <div class="blocks-section">
@@ -100,21 +78,73 @@
         </div>
 
         <!-- MULTIPLICATION -->
-        <div v-if="displayType == DisplayType.MULTIPLICATION" style="padding:10px">
-          <div v-for="n in multiplier" :key="n" style="border:1px solid black;min-height:100px;margin-bottom:5px">
-              <number-block :number="multiplicationNumber"/>
+        <div
+          v-if="displayType == DisplayType.MULTIPLICATION"
+          style="padding: 10px"
+        >
+          <div
+            v-for="n in multiplier"
+            :key="n"
+            style="
+              border: 1px solid black;
+              min-height: 100px;
+              margin-bottom: 5px;
+            "
+          >
+            <number-block :number="multiplicationNumber" />
           </div>
         </div>
 
         <!-- DIVISION -->
-        <div v-if="displayType == DisplayType.DIVISION">Division (TODO)</div>
+        <div v-if="displayType == DisplayType.DIVISION" style="padding: 10px">
+          <number-block :number="divisionNumber" />
+          <hr v-if="divisionNumber != ''" />
+          <div
+            class="error"
+            v-if="divisionRemainder !== '' && parseInt(divisionRemainder) < 0"
+          >
+            Your answer is too big
+          </div>
+          <div v-if="divisionAnswer !== '' && divisionRemainder > 0" style="">
+            <span>R</span><number-block :number="divisionRemainder" />
+          </div>
+          <div
+            v-if="
+              divisor !== '' &&
+              divisionNumber !== '' &&
+              parseInt(divisor) <= parseInt(divisionNumber)
+            "
+            style="margin-top: 20px"
+          >
+            <div
+              v-for="n in divisor"
+              :key="n"
+              style="
+                border: 1px solid black;
+                min-height: 100px;
+                margin-bottom: 5px;
+              "
+            >
+              <number-block
+                v-if="divisionAnswer !== ''"
+                :number="divisionAnswer"
+              />
+            </div>
+          </div>
+        </div>
 
         <!-- ADDITION -->
-        <div v-if="displayType == DisplayType.ADDITION">Addition (TODO)</div>
+        <div v-if="displayType == DisplayType.ADDITION">
+          <number-block :number="additionNumber1" /> 
+          <div style="font-size:4rem" v-if="additionNumber1">+</div>
+          <number-block :number="additionNumber2" />
+        </div>
 
         <!-- SUBTRACTION -->
         <div v-if="displayType == DisplayType.SUBTRACTION">
-          Subtraction (TODO)
+          <number-block :number="subtractionNumber1" /> 
+          <div style="font-size:4rem" v-if="subtractionNumber1">-</div>
+          <number-block :number="subtractionNumber2" />
         </div>
       </div>
     </main>
@@ -124,8 +154,12 @@
 </template>
 
 <script>
+import AdditionExpression from "./components/AdditionExpression.vue";
+import DivisionExpression from "./components/DivisionExpression.vue";
+import MultiplicationExpression from "./components/MultiplicationExpression.vue";
 import NumberBlock from "./components/NumberBlock.vue";
 import NumberInput from "./components/NumberInput.vue";
+import SubtractionExpression from './components/SubtractionExpression.vue';
 
 const DisplayType = {
   NUMBER: "number",
@@ -140,6 +174,10 @@ export default {
   components: {
     NumberInput,
     NumberBlock,
+    MultiplicationExpression,
+    DivisionExpression,
+    AdditionExpression,
+    SubtractionExpression
   },
   data: function () {
     return {
@@ -151,12 +189,19 @@ export default {
       // For Multiplication
       multiplicationNumber: "",
       multiplier: "",
-      multiplierOptions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      multiplicationAnswer: "",
 
       // For Division
       divisionNumber: "",
       divisor: "",
+      divisionAnswer: "",
+
+      // For Addition
+      additionNumber1: "",
+      additionNumber2: "",
+
+      // For Subtraction
+      subtractionNumber1: "",
+      subtractionNumber2: "",
     };
   },
 
@@ -171,22 +216,39 @@ export default {
    * Computed Properties
    */
   computed: {
-    multiplicationExpressionComplete() {
-      return (
-        this.multiplicationNumber != "" &&
-        this.multiplier != "" &&
-        this.multiplicationAnswer != ""
-      );
+    /**
+     * Get the remainder given the answer provided
+     */
+    divisionRemainder() {
+      if (
+        this.divisionNumber !== "" &&
+        this.divisor !== "" &&
+        this.divisionAnswer
+      ) {
+        return (
+          parseInt(this.divisionNumber) -
+          parseInt(this.divisor) * parseInt(this.divisionAnswer)
+        ).toString();
+      }
+      return "";
     },
 
-    multiplicationCorrect() {
-      if (this.multiplicationExpressionComplete) {
-        return (
-          parseInt(this.multiplier) * parseInt(this.multiplicationNumber) ==
-          parseInt(this.multiplicationAnswer)
-        );
+    correctDivisionAnswer() {
+      if (this.divisionNumber !== "" && this.divisor !== "") {
+        return Math.floor(
+          parseInt(this.divisionNumber) / parseInt(this.divisor)
+        ).toString();
       }
-      return false;
+      return "";
+    },
+
+    correctDivisionRemainder() {
+      if (this.divisionNumber !== "" && this.divisor !== "") {
+        return (
+          parseInt(this.divisionNumber) % parseInt(this.divisor)
+        ).toString();
+      }
+      return "";
     },
   },
 
@@ -208,22 +270,40 @@ export default {
       this.number = number;
     },
 
-    updateMultiplicationNumber(value) {
-      console.log('Update number', value)
-      this.multiplicationNumber = value;
+    /**
+     * Update the multiplication blocks display
+     */
+    updateMultiplication({ multiplier, number }) {
+      this.multiplier = multiplier;
+      this.multiplicationNumber = number;
     },
 
-    updateMultiplicationAnswer(value) {
-      console.log('Update answer', value)
-      this.multiplicationAnswer = value;
+    /**
+     * Update the division blocks display
+     */
+    updateDivision({ divisor, number, answer }) {
+      this.divisor = divisor;
+      this.divisionNumber = number;
+      this.divisionAnswer = answer;
     },
 
-    clearMultiplicationExpression() {
-      console.log('clear')
-      this.multiplier = "";
-      this.multiplicationNumber = "";
-      this.multiplicationAnswer = "";
-    }
+    /**
+     * Update the addition blocks display
+     */
+    updateAddition({ number1, number2 }) {
+      console.log('update addition', number1, number2)
+      this.additionNumber1 = number1;
+      this.additionNumber2 = number2;
+    },
+
+    /**
+     * Update the subtraction blocks display
+     */
+    updateSubtraction({ number1, number2 }) {
+      console.log('update subtraction', number1, number2)
+      this.subtractionNumber1 = number1;
+      this.subtractionNumber2 = number2;
+    },
   },
 };
 </script>
@@ -262,14 +342,19 @@ body {
     height: 100%;
   }
 
-  .tick, .cross {
+  .tick,
+  .cross {
     font-size: 3rem;
   }
   .tick {
-    color: green
+    color: green;
   }
   .cross {
-    color:red
+    color: red;
+  }
+
+  .clear-button {
+    margin-left: auto;
   }
 }
 
@@ -305,6 +390,7 @@ header {
   margin-bottom: 5px;
   width: 70px;
   height: 70px;
+  font-size: 2rem;
 }
 
 .left-side button.selected {
@@ -349,5 +435,9 @@ footer {
 .show-button {
   width: 100px;
   height: 100%;
+}
+
+.error {
+  color: red;
 }
 </style>

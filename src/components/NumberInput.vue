@@ -36,13 +36,11 @@ export default {
   },
   watch: {
     value: function (newVal) {
-      this.number = (newVal !== undefined) ? newVal : "";
-      console.log('watch', this.number)
+      this.number = newVal;
     },
   },
   created() {
-    this.number = (this.value !== undefined) ? this.value : "";
-    console.log('created', this.number)
+    this.number = this.value;
   },
   methods: {
     onChanged() {
