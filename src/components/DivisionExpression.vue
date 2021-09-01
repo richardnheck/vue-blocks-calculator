@@ -15,7 +15,6 @@
       <div class="tick" v-if="answerCorrect">✓</div>
       <div class="cross" v-else>✗</div>
     </div>
-    <div v-if="divisionError" class="error">Can't divide this</div>
     <button class="clear-button" @click="clearExpression()">Clear</button>
   </div>
 </template>

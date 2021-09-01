@@ -85,6 +85,7 @@ export default {
       this.$emit("changed", {
         multiplier: this.multiplier,
         number: this.number,
+        answer: this.answer
       });
     },
   },

@@ -80,6 +80,7 @@ export default {
       this.$emit("changed", {
         number1: this.number1,
         number2: this.number2,
+        answer: this.answer
       });
     },
   },

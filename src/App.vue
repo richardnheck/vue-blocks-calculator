@@ -47,7 +47,13 @@
           v-show="displayType == DisplayType.NUMBER"
           style="display: flex; padding: 5px"
         >
-          <span style="font-size: 40px; margin-left:10px; margin-top: 7px; margin-right: 10px"
+          <span
+            style="
+              font-size: 40px;
+              margin-left: 10px;
+              margin-top: 7px;
+              margin-right: 10px;
+            "
             >Enter Number</span
           >
           <number-input :value="number" @change="show($event)" />
@@ -70,7 +76,7 @@
 
         <!-- SUBTRACTION -->
         <div v-show="displayType == DisplayType.SUBTRACTION">
-          <subtraction-expression @changed="updateSubtraction($event)"/>
+          <subtraction-expression @changed="updateSubtraction($event)" />
         </div>
       </div>
       <div class="blocks-section">
@@ -84,12 +90,11 @@
           v-if="displayType == DisplayType.MULTIPLICATION"
           style="padding: 10px"
         >
-          <div
-            v-for="n in multiplier"
-            :key="n"
-          >
+          <div v-for="n in multiplier" :key="n">
             <number-block :number="multiplicationNumber" />
           </div>
+          <div class="operator">=</div>
+          <number-block :number="multiplicationAnswer" />
         </div>
 
         <!-- DIVISION -->
@@ -98,27 +103,24 @@
           <hr v-if="divisionNumber != ''" />
           <div
             class="alert"
-            v-if="divisionRemainder !== '' && parseInt(divisionRemainder) < 0"
+            v-if="parseInt(divisor) > parseInt(divisionNumber)"
           >
+            Can't divide {{ divisionNumber}} by {{ divisor}}. We are doing fractions just yet.
+          </div>
+          <div
+            class="alert"
+            v-if="divisionRemainder !== '' && parseInt(divisionRemainder) < 0">
             Your answer is too big
           </div>
           <div v-if="divisionAnswer !== '' && divisionRemainder > 0" style="">
             <span class="sub-title">Remainder</span>
             <number-block :number="divisionRemainder" />
           </div>
-         
-          <div
-            v-if="
-              divisor !== '' &&
-              divisionNumber !== '' &&
-              parseInt(divisor) <= parseInt(divisionNumber)
-            "
-            style="margin-top: 20px"
-          >
-           <span class="sub-title">Result</span>
+
+          <div v-if="showBlockForDivision" style="margin-top: 20px">
+            <span class="sub-title">Result</span>
             <div v-for="n in divisor" :key="n">
-             <number-block
-                :number="divisionAnswer"/>
+              <number-block :number="divisionAnswer" />
               <!--
               <number-block
                 v-if="divisionAnswer !== ''"
@@ -130,16 +132,20 @@
 
         <!-- ADDITION -->
         <div v-if="displayType == DisplayType.ADDITION">
-          <number-block :number="additionNumber1" /> 
+          <number-block :number="additionNumber1" />
           <div class="operator">+</div>
           <number-block :number="additionNumber2" />
+           <div class="operator">=</div>
+            <number-block :number="additionAnswer" />
         </div>
 
         <!-- SUBTRACTION -->
         <div v-if="displayType == DisplayType.SUBTRACTION">
-          <number-block :number="subtractionNumber1" /> 
+          <number-block :number="subtractionNumber1" />
           <div class="operator">-</div>
           <number-block :number="subtractionNumber2" />
+          <div class="operator">=</div>
+          <number-block :number="subtractionAnswer" />
         </div>
       </div>
     </main>
@@ -154,7 +160,7 @@ import DivisionExpression from "./components/DivisionExpression.vue";
 import MultiplicationExpression from "./components/MultiplicationExpression.vue";
 import NumberBlock from "./components/NumberBlock.vue";
 import NumberInput from "./components/NumberInput.vue";
-import SubtractionExpression from './components/SubtractionExpression.vue';
+import SubtractionExpression from "./components/SubtractionExpression.vue";
 
 const DisplayType = {
   NUMBER: "number",
@@ -172,7 +178,7 @@ export default {
     MultiplicationExpression,
     DivisionExpression,
     AdditionExpression,
-    SubtractionExpression
+    SubtractionExpression,
   },
   data: function () {
     return {
@@ -184,6 +190,7 @@ export default {
       // For Multiplication
       multiplicationNumber: "",
       multiplier: "",
+      multiplicationAnswer: "",
 
       // For Division
       divisionNumber: "",
@@ -193,10 +200,12 @@ export default {
       // For Addition
       additionNumber1: "",
       additionNumber2: "",
+      additionAnswer: "",
 
       // For Subtraction
       subtractionNumber1: "",
       subtractionNumber2: "",
+      subtractionAnswer: ""
     };
   },
 
@@ -245,6 +254,16 @@ export default {
       }
       return "";
     },
+
+    /**
+     * Determine whether to show the blocks for division
+     */
+    showBlockForDivision() {
+      const hasDivisor = this.divisor !== ""; 
+      //const hasDivisonNumber = this.divisionNumber !== "";
+      //const divisionPossible = parseInt(this.divisor) <= parseInt(this.divisionNumber);
+      return hasDivisor;
+    },
   },
 
   /**
@@ -268,9 +287,10 @@ export default {
     /**
      * Update the multiplication blocks display
      */
-    updateMultiplication({ multiplier, number }) {
+    updateMultiplication({ multiplier, number, answer }) {
       this.multiplier = multiplier;
       this.multiplicationNumber = number;
+      this.multiplicationAnswer = answer;
     },
 
     /**
@@ -285,19 +305,21 @@ export default {
     /**
      * Update the addition blocks display
      */
-    updateAddition({ number1, number2 }) {
-      console.log('update addition', number1, number2)
+    updateAddition({ number1, number2, answer }) {
+      console.log("update addition", number1, number2);
       this.additionNumber1 = number1;
       this.additionNumber2 = number2;
+      this.additionAnswer = answer;
     },
 
     /**
      * Update the subtraction blocks display
      */
-    updateSubtraction({ number1, number2 }) {
-      console.log('update subtraction', number1, number2)
+    updateSubtraction({ number1, number2, answer }) {
+      console.log("update subtraction", number1, number2);
       this.subtractionNumber1 = number1;
       this.subtractionNumber2 = number2;
+      this.subtractionAnswer = answer
     },
   },
 };
@@ -317,7 +339,7 @@ body {
 }
 
 .expression {
-  margin-left:10px;
+  margin-left: 10px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -334,7 +356,7 @@ body {
     height: 65px;
     background-color: #805ab8;
     color: white;
-    border:2px solid #332449;
+    border: 2px solid #332449;
   }
 
   button {
@@ -374,8 +396,8 @@ header {
 .left-side {
   grid-column: 1 / 2;
   width: 75px;
-  background-color:#46475f;
-  border-right:2px solid #2e2f3f;
+  background-color: #46475f;
+  border-right: 2px solid #2e2f3f;
   display: flex;
   flex-direction: row;
   flex-flow: wrap;
@@ -385,16 +407,16 @@ header {
   align-content: flex-start; /* NEW */
 
   .logo {
-    display:grid;
+    display: grid;
     justify-content: center;
     align-items: center;
     color: #ffe484;
     border-bottom: 2px solid #2e2f3f;
-    height:80px;
+    height: 80px;
     width: 100%;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     font-size: 2rem;
-    background-color:#4b346d;
+    background-color: #4b346d;
   }
 }
 
@@ -403,10 +425,10 @@ header {
   width: 70px;
   height: 70px;
   font-size: 2rem;
-  background-color:transparent;
+  background-color: transparent;
   border: 1px solid #ffe484;
-  color:#ffe484;
-  border-radius:5px;
+  color: #ffe484;
+  border-radius: 5px;
 
   &:active {
     background-color: #7d7da8;
@@ -418,41 +440,52 @@ header {
 }
 
 .left-side button.number {
-  font-size:1.5rem;
+  font-size: 1.5rem;
 }
-
 
 main {
   grid-column: 2 / 3;
   display: grid;
   grid-template: auto 1fr / auto;
 
-  background: rgb(63,94,251);
-  background: -moz-linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
-  background: -webkit-linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
-  background: linear-gradient(344deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+  background: rgb(63, 94, 251);
+  background: -moz-linear-gradient(
+    344deg,
+    rgba(63, 94, 251, 1) 0%,
+    rgba(252, 70, 107, 1) 100%
+  );
+  background: -webkit-linear-gradient(
+    344deg,
+    rgba(63, 94, 251, 1) 0%,
+    rgba(252, 70, 107, 1) 100%
+  );
+  background: linear-gradient(
+    344deg,
+    rgba(63, 94, 251, 1) 0%,
+    rgba(252, 70, 107, 1) 100%
+  );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3f5efb",endColorstr="#fc466b",GradientType=1);
 }
 
 main .number-section {
   height: 80px;
   background-color: #563d7c;
-  border-bottom:2px solid #372650;
+  border-bottom: 2px solid #372650;
   color: #c7a1ff;
 }
 
 main .blocks-section {
   .sub-title {
-    margin-left:10px;
+    margin-left: 10px;
     color: black;
     font-weight: bold;
   }
 
   .operator {
-    margin:0px;
-    padding:0px;
-    font-size:3rem;
-    text-align:center
+    margin: 0px;
+    padding: 0px;
+    font-size: 3rem;
+    text-align: center;
   }
 }
 
@@ -482,27 +515,25 @@ footer {
 }
 
 .alert {
-  background-color:#fff3cd;
-  border-color:#e0d1a2;
+  background-color: #fff3cd;
+  border-color: #e0d1a2;
   color: #856404;
-  padding:15px;
-  border-radius:5px;
-  margin:10px;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px;
 }
 
 .clear-button {
   height: 60px !important;
   margin: 5px;
-  background-color:transparent;
+  background-color: transparent;
   border: 1px solid #ffe484;
-  color:#ffe484;
-  font-size:1.5rem;
-  border-radius:5px;
+  color: #ffe484;
+  font-size: 1.5rem;
+  border-radius: 5px;
 
   &:active {
     background-color: #7755aa;
   }
 }
-
-
 </style>
